@@ -6,6 +6,14 @@ class DumpRequestsController < ApplicationController
     end.join("\n")
     body    = request.raw_post
     Request.create!(headers: headers, body: body)
+    begin
+      json_body = JSON.parse(body)
+      if json_body.keys.sort == ['EUI', 'ack', 'bat', 'cmd', 'data', 'fcnt', 'port', 'seqno', 'ts']
+        RequestMailer.request_mail(json_body['EUI'], json_body['data']).deliver_now
+      end
+    rescue
+      # noop
+    end
     render json: { headers: headers.split("\n"), body: body }, status: :ok
   end
 
