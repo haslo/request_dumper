@@ -1,0 +1,14 @@
+%table{border: 1}
+  %tr
+    %th Zeit
+    %th Headers
+    %th Body
+  - @requests.each do |request|
+    %tr
+      %td{valign: 'top'}= I18n.l(request.created_at)
+      %td{valign: 'top'}
+        %ul
+          - request.headers.split("\n").each do |header|
+            %li= header
+      %td{valign: 'top'}
+        %code= request.body
